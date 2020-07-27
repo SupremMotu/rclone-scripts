@@ -1,0 +1,32 @@
+[Unit]
+Description=RClone Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+Environment=RCLONE_CONFIG=/opt/rclone/rclone.conf
+KillMode=none
+RestartSec=5
+ExecStart=/usr/bin/rclone mount gdrive: /GD \
+--allow-other \
+--buffer-size 0M \
+--cache-chunk-no-memory \
+--dir-cache-time 96h \
+--log-level INFO \
+--log-file /opt/rclone/logs/rclone.log \
+--poll-interval 15s \
+--timeout 1h \
+--umask 002 \
+--user-agent animosityapp \
+--rc \
+--rc-addr 127.0.0.1:5572 \
+--config /opt/rclone/rclone.conf
+
+ExecStop=/bin/fusermount -uz /GD
+Restart=on-failure
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
